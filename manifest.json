@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Y2kTube",
+  "version": "1",
+
+  "description": "Adds a mini y2k style mini player for youtube content",
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.mozilla.org/*", "*://*.youtube.com/*"],
+      "js": ["player.js", "y2ktube.js"]
+    }
+  ]
+}
