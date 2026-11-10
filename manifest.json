@@ -5,6 +5,10 @@
 
   "description": "Adds a mini y2k style mini player for youtube content",
 
+  "action": {
+    "default_popup": "index.html"
+  },
+
   "content_scripts": [
     {
       "matches": ["*://*.mozilla.org/*", "*://*.youtube.com/*"],

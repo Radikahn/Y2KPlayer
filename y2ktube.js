@@ -10,7 +10,7 @@ function checkUrl() {
 
   // Only launch when the user is on a `/watch` page
   if (window.location.pathname === "/watch") {
-    launchY2kPlayer(document);
+    launchY2kPlayer(document).catch((err) => console.error("[y2ktube]", err));
   }
 }
 
