@@ -51,8 +51,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 })
 
-//Send the current video progress percentage to the extension when extension is open
 waitFor(document, () => {
+  //Send the current video progress percentage to the extension when extension is open
   //@ts-ignore
   if (video != undefined) {
     video.addEventListener('timeupdate', () => {
@@ -61,9 +61,16 @@ waitFor(document, () => {
         const percentage = (video.currentTime / video.duration) * 100;
 
         //@ts-ignore
-      browser.runtime.sendMessage({ action: "processData", data: percentage }).catch(error => { })
+      browser.runtime.sendMessage({ action: "processData", data: percentage }).catch(error => { });
       })
   }
+
+  //send video title to the extension when it is captured
+  if (videoTitle != "") {
+    //@ts-ignore
+    browser.runtime.sendMessage({ action: "processTitle", data: videoTitle }).catch(error => { });
+  }
+
 })
 
 /**
@@ -93,10 +100,8 @@ async function launchY2kPlayer(document) {
 
 
   console.log("---------------------------------------------------------------------------")
-  console.log(videoTitle)
-  console.log(videoTitle.length)
-  console.log(video)
-  console.log(typeof(video))
+  console.log("y2k player extension active")
+  console.log("you are currently watching: \n", videoTitle)
 }
 
 

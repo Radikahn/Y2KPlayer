@@ -2,20 +2,30 @@
     <head>
         <meta charset="UTF-8" />
         <script src="vendor/tailwind.js"></script>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div class="m-10 flex-row justify-center">
-            <span class="text-3xl font-bold underline">Y2k Player</span>
-            <button
-                id="play-pause"
-                class="mt-4 w-full  bg-neutral-300 cursor-pointer hover:bg-neutral-500 duration-300"
-            >
-                   x
-            </button>
+        <!--
+            All ipod-white/*.png assets share the same 443x729 canvas, so every
+            layer is stacked at inset:0 and interactive regions are positioned
+            with percentages of that canvas.
+        -->
+        <div id="ipod">
+            <img src="assets/ipod-white/body.png" class="layer" alt="" />
 
-            <progress id="html5Progress" class="pt-4" max="100" value="0"></progress>
+            <!--div locked to the size of the screen-->
+            <div id="screen-content" class="flex flex-col justify-center px-2">
+                <div id="title-box" class="player-title-box">
+                    <span id="song-title" class="song-title text-sm font-medium"></span>
+                </div>
+                <progress id="html5Progress" class="mt-25 w-full h-2.5 rounded-xl" max="100" value="0"></progress>
+            </div>
 
+            <img src="assets/ipod-white/screen.png" class="layer screen-glass" alt="" />
+            <img src="assets/ipod-white/playPauseButton.png" class="layer" alt="" />
+
+            <button id="play-pause" aria-label="Play / pause"></button>
         </div>
+        <script src="./index.js"></script>
     </body>
-    <script src="./index.js"></script>
 </html>

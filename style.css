@@ -1,0 +1,99 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 230px;
+    height: 379px; /* 230 * 729 / 443 — matches the asset aspect ratio */
+    overflow: hidden;
+}
+
+/* Container sized to the asset canvas (443x729) */
+#ipod {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 443 / 729;
+}
+
+/* Every asset image covers the full canvas */
+.layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Screen rect in the asset: x 31-412, y 29-321 (of 443x729) */
+#screen-content {
+    position: absolute;
+    left: 7%;
+    top: 4%;
+    width: 86%;
+    height: 40%;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #dde6e8;
+    color: #1a1a1a;
+}
+
+/* Glass/glare overlay on top of the screen content */
+.screen-glass {
+    opacity: 0.35;
+}
+
+/* Center button in the asset: center (214, 531), diameter ~98 */
+#play-pause {
+    position: absolute;
+    left: 37.2%;
+    top: 66.1%;
+    width: 22.1%;
+    height: 13.4%;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #555;
+    font-size: 14px;
+    transition: background-color 150ms, box-shadow 150ms;
+}
+
+#play-pause:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+#play-pause:active {
+    background: rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Song title bounce-scroll (music player marquee) */
+.player-title-box {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.song-title {
+    display: inline-block; /* required for transform */
+}
+
+/* Added by JS only when the title overflows the box */
+.song-title.scrolling {
+    animation: music-bounce var(--scroll-duration, 6s) ease-in-out infinite alternate;
+}
+
+.player-title-box:hover .song-title {
+    animation-play-state: paused;
+}
+
+@keyframes music-bounce {
+    0%, 15% {
+        transform: translateX(0);
+    }
+    85%, 100% {
+        transform: translateX(var(--scroll-distance, 0));
+    }
+}
