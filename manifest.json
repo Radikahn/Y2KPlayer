@@ -11,8 +11,12 @@
 
   "content_scripts": [
     {
-      "matches": ["*://*.mozilla.org/*", "*://*.youtube.com/*"],
+      "matches": ["*://*.youtube.com/*"],
       "js": ["player.js", "y2ktube.js"]
     }
-  ]
+  ],
+
+  "externally_connectable": {
+    "matches": ["https://*.youtube.com/*"]
+  }
 }

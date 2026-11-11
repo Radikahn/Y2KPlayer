@@ -1,5 +1,18 @@
 // @ts-check
 
+/**@type {boolean} debug toggle */
+//@ts-ignore
+const debug = true;
+
+/**@type {string} video paused state*/
+//@ts-ignore
+const PAUSED = "paused";
+
+/**@type {string} video playing state*/
+//@ts-ignore
+const PLAYING = "playing";
+
+
 /**@type {string}  */
 var VIDEO_TITLE_SELECTOR = "ytd-watch-metadata h1";
 
@@ -12,9 +25,46 @@ var WAIT_TIMEOUT_MS = 10000;
 /**@type {string} */
 var videoTitle = ""
 
-/**@type {HTMLVideoElement | undefined} */
+/**@type {HTMLVideoElement | undefined}
+ * This is the current youtube video's HTML5 video box
+ */
 var video = undefined;
 
+
+/**@param {number} ms local sleep function */
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+
+//EVENT LISTENERS TO REGISTER
+//@ts-ignore
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (debug) {console.log("recieved a message for video element")}
+
+  if (message.action === "processData") {
+    let mediaOperation = message.data;
+
+    if (debug) { console.log(`Received message: ${mediaOperation}`) };
+
+    let currentState = mediaController(mediaOperation)
+
+    sendResponse({ reply: `${currentState}`})
+  }
+})
+
+//Send the current video progress percentage to the extension when extension is open
+waitFor(document, () => {
+  //@ts-ignore
+  if (video != undefined) {
+    video.addEventListener('timeupdate', () => {
+        if (!video?.duration) return;
+
+        const percentage = (video.currentTime / video.duration) * 100;
+
+        //@ts-ignore
+      browser.runtime.sendMessage({ action: "processData", data: percentage }).catch(error => { })
+      })
+  }
+})
 
 /**
  * Once on a youtube watch page, launchY2kPlayer will act as the entry point
@@ -36,8 +86,11 @@ async function launchY2kPlayer(document) {
 
   videoTitle = await getTitle(document);
 
-  // we need to get the video -> html5 video object is what yt uses for standard
+  // we need to get the video -> then send it to the extension
   video = await getVideo(document);
+
+
+
 
   console.log("---------------------------------------------------------------------------")
   console.log(videoTitle)
@@ -103,11 +156,38 @@ function getVideo(document) {
     /** @type {HTMLVideoElement | null} */ (document.querySelector(VIDEO_SELECTOR)));
 }
 
+/**
+ * @param {string} mediaOperation
+ * @returns {string | undefined} videoState
+ */
+function mediaController(mediaOperation) {
+  video ??= /** @type {HTMLVideoElement | undefined} */ (document.querySelector(VIDEO_SELECTOR) ?? undefined);
 
+  switch (mediaOperation) {
+    case "playpause":
+      return playPause(video)
+      //more cases to come
+    default:
+      return undefined
+  }
+}
 
 /**
- * THIS FUNCTION IS FOR USE IN HTML
+ *
+ * @param {HTMLVideoElement | undefined} video
+ * @returns {string} videoState
  */
-function pauseVideo() {
-  video?.pause();
+function playPause(video) {
+  if (video === undefined) {
+    throw new Error("Cannot applly media operation to undefined video instance")
+  }
+
+  if (video.paused) {
+    video.play()
+    return PLAYING
+  }
+  else {
+    video.pause()
+    return PAUSED
+  }
 }
